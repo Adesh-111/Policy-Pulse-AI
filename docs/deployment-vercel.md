@@ -118,7 +118,7 @@ Keep preview patterns as narrow as operationally practical. Configure email temp
 
 Apply backward-compatible database migrations before deploying code that requires them. Deploy from the protected default branch. Vercel reads `vercel.json` to configure the cron tick and bounded function duration.
 
-The tracked cron runs once per minute and processes one leased job per invocation. Choose a Vercel plan that supports the configured cron frequency; if the selected plan permits a lower frequency, change the schedule and expect proportionally higher queue latency. Keep `CRON_SECRET` configured because the handler verifies a timing-safe bearer token for both scheduled and manual recovery ticks.
+The tracked cron uses the Hobby-compatible once-per-day schedule and processes one leased job per invocation. On Vercel Pro, change the schedule to `* * * * *` for once-per-minute processing. A lower frequency produces proportionally higher queue latency, so use manual recovery ticks when testing on Hobby. Keep `CRON_SECRET` configured because the handler verifies a timing-safe bearer token for both scheduled and manual recovery ticks.
 
 Run the smoke test after deployment:
 

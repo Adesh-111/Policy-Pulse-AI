@@ -2,7 +2,6 @@ import { createHash } from "node:crypto";
 import path from "node:path";
 
 import mammoth from "mammoth";
-import { PDFParse } from "pdf-parse";
 
 import type {
   DocumentFileInput,
@@ -89,7 +88,9 @@ function validateSignature(kind: SupportedDocumentKind, bytes: Uint8Array): void
 }
 
 async function extractPdf(bytes: Uint8Array): Promise<{ pages: ExtractedPage[]; warnings: string[] }> {
-  const parser = new PDFParse({ data: bytes });
+  const { CanvasFactory } = await import("pdf-parse/worker");
+  const { PDFParse } = await import("pdf-parse");
+  const parser = new PDFParse({ data: bytes, CanvasFactory });
   try {
     const result = await parser.getText();
     return {

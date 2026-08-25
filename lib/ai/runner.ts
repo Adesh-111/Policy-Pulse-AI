@@ -5,7 +5,7 @@ import { OpenAIService } from "@/lib/openai";
 
 import type { PolicyAgentDefinition } from "./agents";
 import { buildUntrustedInputPrompt } from "./prompts";
-import { CitationSchema, type Citation } from "./schemas";
+import { CitationSchema } from "./schemas";
 import {
   AGENT_TOOL_NAMES,
   collectCitations,

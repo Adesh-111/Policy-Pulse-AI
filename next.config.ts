@@ -20,7 +20,7 @@ const contentSecurityPolicy = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
-  serverExternalPackages: ["mammoth", "pdf-parse", "postgres"],
+  serverExternalPackages: ["@napi-rs/canvas", "mammoth", "pdf-parse", "postgres"],
   async headers() {
     return [
       {
