@@ -1,0 +1,17 @@
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+node_modules/
+.next/
+coverage/
+dist/
+build/
+out/
+.git/
+.graphify-venv/
+graphify-out/
+reports/
+tmp/
+*.log

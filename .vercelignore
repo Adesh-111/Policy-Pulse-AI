@@ -1,0 +1,12 @@
+.git/
+.github/
+.graphify-venv/
+.agents/
+.codex/
+graphify-out/
+coverage/
+docs/
+sample-policies/
+supabase/tests/
+tests/
+*.log

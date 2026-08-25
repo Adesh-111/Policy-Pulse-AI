@@ -1,26 +1,40 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f6f7f4;
+  --foreground: #17211e;
+  --line: #dfe5e1;
+  --brand: #0d684d;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-mono: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+* { border-color: var(--line); }
+html { scroll-behavior: smooth; }
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  text-rendering: optimizeLegibility;
 }
+::selection { background: #b9dece; color: #082c21; }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+button:not(:disabled), [role="button"]:not([aria-disabled="true"]) { cursor: pointer; }
+:focus-visible { outline: 3px solid rgba(13, 104, 77, 0.28); outline-offset: 2px; }
+.app-grid {
+  background-image: linear-gradient(rgba(13, 104, 77, 0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(13, 104, 77, 0.045) 1px, transparent 1px);
+  background-size: 38px 38px;
+}
+.hero-glow {
+  background: radial-gradient(circle at 18% 22%, rgba(67, 168, 127, 0.18), transparent 34%), radial-gradient(circle at 80% 15%, rgba(217, 164, 65, 0.14), transparent 30%), linear-gradient(180deg, #f8fbf8 0%, #f3f6f2 100%);
+}
+.paper-shadow { box-shadow: 0 1px 1px rgba(12, 36, 28, 0.04), 0 16px 50px rgba(12, 36, 28, 0.08); }
+.soft-scrollbar { scrollbar-width: thin; scrollbar-color: #bcc8c2 transparent; }
+@keyframes pulse-soft { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+.animate-pulse-soft { animation: pulse-soft 1.7s ease-in-out infinite; }
+@media print { .no-print { display: none !important; } body { background: white; } }
