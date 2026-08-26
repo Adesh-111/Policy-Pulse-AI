@@ -133,6 +133,40 @@ describe("RAG retrieval, grounding, and citations", () => {
       .toBe("Students need 80% attendance [S1].");
   });
 
+  it("turns schema-shaped streamed output into a reader-friendly answer", async () => {
+    const provider = {
+      searchChannels: vi.fn().mockResolvedValue({ vector: [evidence], fullText: [evidence] }),
+    } satisfies HybridSearchProvider;
+    const raw = JSON.stringify({
+      evidence_for_highest_risk_finding: [
+        "Students must maintain at least 80% attendance [S1].",
+      ],
+      decision_summary:
+        "Students below the attendance threshold may become ineligible for examinations.",
+    });
+    const events = [];
+    for await (const event of streamPolicyAnswer(
+      "Show the evidence for the highest-risk finding.",
+      filters,
+      { openAI: streamingOpenAI(raw), provider },
+      { rewriteQuery: false, rerank: false },
+    )) events.push(event);
+
+    const answer = events
+      .filter((event) => event.type === "text-delta")
+      .map((event) => (event.type === "text-delta" ? event.delta : ""))
+      .join("");
+    expect(answer).toBe(
+      "Students below the attendance threshold may become ineligible for examinations.\n\n" +
+        "Supporting evidence:\n1. Students must maintain at least 80% attendance [S1].",
+    );
+    expect(answer).not.toContain("decision_summary");
+    expect(events.find((event) => event.type === "sources")).toEqual({
+      type: "sources",
+      citations: [expect.objectContaining({ chunkId: evidence.id })],
+    });
+  });
+
   it("fails closed when a streamed answer cites a source label outside authorized retrieval", async () => {
     const provider = {
       searchChannels: vi.fn().mockResolvedValue({ vector: [evidence], fullText: [evidence] }),

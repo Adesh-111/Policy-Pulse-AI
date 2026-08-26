@@ -2,11 +2,17 @@ import { Document } from "@langchain/core/documents";
 import { RunnableLambda } from "@langchain/core/runnables";
 import { z } from "zod";
 
-import { buildGroundedAnswerSystemPrompt, buildUntrustedInputPrompt, type Citation } from "@/lib/ai";
+import {
+  buildGroundedAnswerSystemPrompt,
+  buildUntrustedAnswerPrompt,
+  buildUntrustedInputPrompt,
+  type Citation,
+} from "@/lib/ai";
 import type { OpenAIService } from "@/lib/openai";
 
 import { applyRerankScores, maximalMarginalRelevance, reciprocalRankFusion } from "./algorithms";
 import { chunkToCitation, formatEvidenceForPrompt } from "./citations";
+import { formatGroundedAnswerForDisplay } from "./format-answer";
 import {
   INSUFFICIENT_EVIDENCE_MESSAGE,
   RetrievalFiltersSchema,
@@ -323,7 +329,7 @@ export async function* streamPolicyAnswer(
   const stream = services.openAI.streamText({
     operation: "rag.streaming_answer",
     system: buildGroundedAnswerSystemPrompt(),
-    prompt: buildUntrustedInputPrompt("Answer the question using only the labeled evidence excerpts.", {
+    prompt: buildUntrustedAnswerPrompt("Answer the question using only the labeled evidence excerpts.", {
       question: query,
       evidence: formatEvidenceForPrompt(retrieval.chunks, query),
     }),
@@ -334,7 +340,7 @@ export async function* streamPolicyAnswer(
   for await (const event of stream) {
     if (event.type === "text-delta") answer += event.delta;
   }
-  answer = answer.trim();
+  answer = formatGroundedAnswerForDisplay(answer);
   const citations = canonicalCitationsForAnswer(answer, retrieval.chunks, query);
   if (
     !answer ||

@@ -5,6 +5,7 @@ import { Bot, Filter, History, LoaderCircle, MessageSquareText, Plus, Quote, Sen
 import { apiRequest, arrayValue, citationDisplay, firstString, idOf, isRecord, recordValue, type ApiRecord } from "@/components/api";
 import { useApi } from "@/components/hooks/use-api";
 import { Badge, EmptyState, ErrorState, LoadingState } from "@/components/ui";
+import { formatGroundedAnswerForDisplay } from "@/lib/rag/format-answer";
 
 type Source = ApiRecord;
 type Message = { id: string; role: "user" | "assistant"; content: string; sources?: Source[]; pending?: boolean };
@@ -59,7 +60,10 @@ export function PolicyChat() {
           return [{
             id: idOf(message) || crypto.randomUUID(),
             role,
-            content: firstString(message, ["content"], ""),
+            content:
+              role === "assistant"
+                ? formatGroundedAnswerForDisplay(firstString(message, ["content"], ""))
+                : firstString(message, ["content"], ""),
             sources: arrayValue<Source>(message.citations),
           } satisfies Message];
         }),
